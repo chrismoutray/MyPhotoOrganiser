@@ -29,8 +29,8 @@ namespace MyPhotoOrganiser
                 Console.WriteLine("/c - (optional) copy files instead of move");
                 Console.WriteLine("/s - (optional) include sub directories");
                 Console.WriteLine("/p - (optional) System.IO.Directory.GetFiles search pattern");
-                Console.WriteLine("/l - (optional) list only, don't change a thing!");
                 Console.WriteLine("\tdefault is *.jpg");
+				Console.WriteLine("/l - (optional) list only, don't change a thing!");
                 return;
             }
 

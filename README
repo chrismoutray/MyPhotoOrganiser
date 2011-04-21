@@ -1,0 +1,22 @@
+Command line tool to sort photos into folders by date.
+By default photos are moved to a sub folder by year then by date. 
+
+Following arguments are supported:
+    /src - source path
+    /dest - (optional) destination path
+        string format {0} date photo taken eg {0:yyyyMMdd}
+        default is <src>\\<year>\\<year><month><day>\\
+    /destf - (optional) string format of organised file
+        string format {0} date photo taken eg {0:yyyyMMdd_HHmmss}
+        string format {1} file name
+        string format {2} files extension
+        default is original filename
+    /c - (optional) copy files instead of move
+    /s - (optional) include sub directories
+    /p - (optional) System.IO.Directory.GetFiles search pattern
+	        default is *.jpg
+    /l - (optional) list only, don't change a thing!
+	
+Examples:
+    MyPhotoOrganiser.exe /src C:\MyPhotos
+    MyPhotoOrganiser.exe /src C:\MyPhotos /c /s /dest C:\SortedPhotos\{0:yyyy}\{0:yyyyMM} /destf {0:yyyyMMdd_HHmmss}{1}{2}
