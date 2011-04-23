@@ -29,7 +29,7 @@ Where:
     /l - (optional) list only, don't change a thing!
 
 Remarks:
-    Destination path is relative to the source path not from where the tool is run.
+    Destination path is relative to the source path not from where the tool is run; unless a full path is used.
     For the file format (/f) argument don't forget to include file extension eg "{1}.{2}".
 
 Examples:
