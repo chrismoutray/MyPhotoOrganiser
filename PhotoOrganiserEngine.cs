@@ -7,23 +7,36 @@ using System.IO;
 
 namespace MyPhotoOrganiser
 {
-    public class PhotoOrganiserEngine
+    public static class PhotoOrganiserEngine
     {
-        public static void OrganisePath(OrganiserCriteria criteria)
+        private static readonly string _defaultDestinationPath = @".\{0:yyyy}\{0:yyyyMMdd}\";
+        private static readonly string _defaultDestinationFile = @"{1}.{2}";
+        private static readonly string _defaultSearchPattern = "*.JPG";
+
+        public static void OrganisePhotos(OrganiserCriteria criteria)
         {
             if (string.IsNullOrEmpty(criteria.SourcePath))
                 throw new ArgumentNullException("source path");
 
+            string sourcePath = criteria.SourcePath.TrimEnd('\\') + @"\";
+
+            string destinationPathPattern = (criteria.DestinationPath ?? _defaultDestinationPath).TrimEnd('\\') + @"\";
+
+            string destinationFilePattern = criteria.DestinationFile ?? _defaultDestinationFile;
+
             SearchOption searchOption = SearchOption.TopDirectoryOnly;
             if (criteria.SearchSubDirectories)
                 searchOption = SearchOption.AllDirectories;
-            string sourcePath = criteria.SourcePath.TrimEnd('\\') + "\\";
-            string searchPattern = criteria.SearchPattern ?? "*.JPG";
+
+            string searchPattern = criteria.SearchPattern ?? _defaultSearchPattern;
 
             string[] files = System.IO.Directory.GetFiles(sourcePath, searchPattern, searchOption);
 
             int total = files.Count();
-            Console.WriteLine(total);
+            if (criteria.KeepOriginal)
+                Console.WriteLine(string.Format("Coping {0} file(s)...", total));
+            else
+                Console.WriteLine(string.Format("Moving {0} file(s)...", total));
 
             foreach (var filePath in files)
             {
@@ -37,14 +50,16 @@ namespace MyPhotoOrganiser
                 if (dateTime == default(DateTime))
                     continue; //TODO: add to fail list
 
-                string destinationPath = criteria.DestinationPath ?? (sourcePath + @"{0:yyyyMMdd}\");
-                destinationPath = string.Format(destinationPath, dateTime).TrimEnd('\\') + "\\";
+                string destinationPath = string.Format(destinationPathPattern, dateTime).TrimEnd('\\') + "\\";
+                if (!Path.IsPathRooted(destinationPath))
+                    destinationPath = sourcePath + destinationPath;
 
                 if (!criteria.ListOnly)
                     Directory.CreateDirectory(destinationPath);
 
-                string destinationFile = criteria.DestinationFile ?? @"{1}.{2}";
-                destinationFile = string.Format(destinationFile, dateTime, file.Name.Substring(0, file.Name.Length - 4), file.Extension.Trim('.'));
+                string originalFile = file.Name;
+
+                string destinationFile = string.Format(destinationFilePattern, dateTime, file.Name.Substring(0, file.Name.Length - 4), file.Extension.Trim('.'));
 
                 string newFilePath = destinationPath + destinationFile;
 
@@ -66,7 +81,8 @@ namespace MyPhotoOrganiser
                         file.MoveTo(newFilePath);
                 }
 
-                Console.WriteLine(total-- + " - " + file.Name);
+                Console.WriteLine(total-- + " - " + originalFile);
+                Console.WriteLine(" -> " + file.FullName);
             }
         }
 
