@@ -43,12 +43,12 @@ namespace MyPhotoOrganiser
                 FileInfo file = new FileInfo(filePath);
 
                 if (!file.Exists)
-                    continue; //TODO: add to fail list
+                    continue; //TODO: add to fail list - photo doesn't not found
 
                 DateTime dateTime = GetPhotoTakenDate(file.FullName);
 
                 if (dateTime == default(DateTime))
-                    continue; //TODO: add to fail list
+                    continue; //TODO: add to fail list - photo doesn't have a timestamp
 
                 string destinationPath = string.Format(destinationPathPattern, dateTime).TrimEnd('\\') + "\\";
                 if (!Path.IsPathRooted(destinationPath))
@@ -64,7 +64,7 @@ namespace MyPhotoOrganiser
                 string newFilePath = destinationPath + destinationFile;
 
                 if (File.Exists(newFilePath))
-                    continue; //TODO: add to fail list
+                    continue; //TODO: add to fail list - a file with the same name already exists at the output location
 
                 if (criteria.KeepOriginal)
                 {
